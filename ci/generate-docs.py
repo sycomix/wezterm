@@ -175,9 +175,7 @@ def screen_shot_table(scheme):
             line += f" \033[{fg}\033[{bg}  {T}  \033[0m"
         lines.append(line)
 
-    lines.append("")
-    lines.append("")
-
+    lines.extend(("", ""))
     screen = "\r\n".join(lines)
 
     header = {
@@ -270,11 +268,9 @@ title: Color Schemes with first letter "{scheme_prefix}"
 """
                     )
 
-                    author = scheme["metadata"].get("author", None)
-                    if author:
+                    if author := scheme["metadata"].get("author", None):
                         idx.write(f"Author: `{author}`<br/>\n")
-                    origin_url = scheme["metadata"].get("origin_url", None)
-                    if origin_url:
+                    if origin_url := scheme["metadata"].get("origin_url", None):
                         idx.write(f"Source: <{origin_url}><br/>\n")
                     version = scheme["metadata"].get("wezterm_version", None)
                     if version and version != "Always":
@@ -282,9 +278,7 @@ title: Color Schemes with first letter "{scheme_prefix}"
 
                     aliases = scheme["metadata"]["aliases"]
                     if len(aliases) > 0:
-                        alias_list = []
-                        for a in aliases:
-                            alias_list.append(f"`{a}`")
+                        alias_list = [f"`{a}`" for a in aliases]
                         aliases = ", ".join(alias_list)
                         idx.write(f"This scheme is also known as {aliases}.<br/>\n")
 
