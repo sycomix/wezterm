@@ -46,7 +46,7 @@ class OpenInWezTermAction(GObject.GObject, Nautilus.MenuProvider):
             pid = int(child.get_identifier())
             props = [("PIDs", GLib.Variant('au', [pid])),
                 ('CollectMode', GLib.Variant('s', 'inactive-or-failed'))]
-            name = 'app-nautilus-org.wezfurlong.wezterm-{}.scope'.format(pid)
+            name = f'app-nautilus-org.wezfurlong.wezterm-{pid}.scope'
             args = GLib.Variant('(ssa(sv)a(sa(sv)))', (name, 'fail', props, []))
             self._systemd.call_sync('StartTransientUnit', args,
                     Gio.DBusCallFlags.NO_AUTO_START, 500, None)
@@ -68,19 +68,12 @@ class OpenInWezTermAction(GObject.GObject, Nautilus.MenuProvider):
             path = location.get_path()
             if path and path not in paths:
                 paths.append(path)
-        if 10 < len(paths):
-            # Let's not open anything if the user selected a lot of directories,
-            # to avoid accidentally spamming their desktop with dozends of
-            # new windows or tabs.  Ten is a totally arbitrary limit :)
-            return []
-        else:
-            return paths
+        return [] if len(paths) > 10 else paths
 
     def get_file_items(self, *args):
         # Nautilus 3.0 API passes args (window, files), 4.0 API just passes files
         files = args[0] if len(args) == 1 else args[1]
-        paths = self._paths_to_open(files)
-        if paths:
+        if paths := self._paths_to_open(files):
             return [self._make_item(name='WezTermNautilus::open_in_wezterm', paths=paths)]
         else:
             return []
@@ -88,8 +81,7 @@ class OpenInWezTermAction(GObject.GObject, Nautilus.MenuProvider):
     def get_background_items(self, *args):
         # Nautilus 3.0 API passes args (window, file), 4.0 API just passes file
         file = args[0] if len(args) == 1 else args[1]
-        paths = self._paths_to_open([file])
-        if paths:
+        if paths := self._paths_to_open([file]):
             return [self._make_item(name='WezTermNautilus::open_folder_in_wezterm', paths=paths)]
         else:
             return []

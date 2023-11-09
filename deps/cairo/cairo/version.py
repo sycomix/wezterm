@@ -30,18 +30,15 @@ version_h = os.path.join(srcroot, "src", "cairo-version.h")
 
 with open(version_h, "r", encoding="utf-8") as f:
     for line in f:
-        res = MAJOR_RE.match(line)
-        if res:
+        if res := MAJOR_RE.match(line):
             assert version_major is None
             version_major = res.group('number')
             continue
-        res = MINOR_RE.match(line)
-        if res:
+        if res := MINOR_RE.match(line):
             assert version_minor is None
             version_minor = res.group('number')
             continue
-        res = MICRO_RE.match(line)
-        if res:
+        if res := MICRO_RE.match(line):
             assert version_micro is None
             version_micro = res.group('number')
             continue

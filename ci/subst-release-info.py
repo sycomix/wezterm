@@ -26,14 +26,13 @@ CATEGORIZE = {
 def categorize(rel):
     downloads = {}
 
-    tag_name = "wezterm-%s" % rel["tag_name"]
+    tag_name = f'wezterm-{rel["tag_name"]}'
     for asset in rel["assets"]:
         url = asset["browser_download_url"]
         name = asset["name"]
 
         for k, v in CATEGORIZE.items():
-            matches = re.search(k, name)
-            if matches:
+            if matches := re.search(k, name):
                 v = matches.expand(v)
                 downloads[v] = (url, name, tag_name)
 
@@ -84,7 +83,7 @@ def load_release_info():
     build_subst(subst, "stable", latest)
     build_subst(subst, "nightly", nightly)
 
-    with open(f"docs/releases.json", "w") as output:
+    with open("docs/releases.json", "w") as output:
         json.dump(subst, output)
 
 
